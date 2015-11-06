@@ -26,24 +26,18 @@ public class Pong extends JPanel implements KeyListener {
 	 * Constant (c.f. final) common to all Pong instances (c.f. static)
 	 * defining the background color of the Pong
 	 */
-	private static final Color backgroundColor = new Color(0xFF, 0x40, 0);
+
+	private static Color backgroundColor = new Color(0, 255, 255);
+
 
 	/**
-	 * Width of pong area
+	 * Pong area
 	 */
-	private static final int SIZE_PONG_X = 800;
-	/**
-	 * Height of pong area
-	 */
-	private static final int SIZE_PONG_Y = 600;
+	private static final Dimension AREA_SIZE = new Dimension(800,600);
 	/**
 	 * Time step of the simulation (in ms)
 	 */
 	public static final int timestep = 10;
-	/**
-	 * Speed of ball (in pixels per second)
-	 */
-	public static final int BALL_SPEED = 2;
 	/**
 	 * Speed of racket (in pixels per second)
 	 */
@@ -61,23 +55,9 @@ public class Pong extends JPanel implements KeyListener {
 	/**
 	 * Ball to be displayed
 	 */
-	private final Image ball;
-	/**
-	 * Width of ball in pixels
-	 */
-	private int ball_width;
-	/**
-	 * Height of ball in pixels
-	 */
-	private int ball_height;
-	/**
-	 * Position of ball
-	 */
-	private Point ball_position = new Point(0, 0);
-	/**
-	 * Speed of ball, in pixels per timestep
-	 */
-	private Point ball_speed = new Point(BALL_SPEED, BALL_SPEED);
+	private Ball ball;
+
+
 
 	/**
 	 * One Racket to be displayed
@@ -101,21 +81,15 @@ public class Pong extends JPanel implements KeyListener {
 	private Point racket_position = new Point(0, 0);
 
 	public Pong() {
+		this.ball = new Ball(AREA_SIZE);
 		ImageIcon icon;
-
-		this.ball = Toolkit.getDefaultToolkit().createImage(
-				ClassLoader.getSystemResource("image/ball.png"));
-		icon = new ImageIcon(ball);
-		this.ball_width = icon.getIconWidth();
-		this.ball_height = icon.getIconHeight();
-
 		this.racket = Toolkit.getDefaultToolkit().createImage(
 				ClassLoader.getSystemResource("image/racket.png"));
 		icon = new ImageIcon(racket);
 		this.racket_width = icon.getIconWidth();
 		this.racket_height = icon.getIconHeight();
 
-		this.setPreferredSize(new Dimension(SIZE_PONG_X, SIZE_PONG_Y));
+		this.setPreferredSize(AREA_SIZE);
 		this.addKeyListener(this);
 	}
 
@@ -123,35 +97,13 @@ public class Pong extends JPanel implements KeyListener {
          * Proceeds to the movement of the ball and updates the screen
 	 */
 	public void animate() {
-		/* Update ball position */
-		ball_position.translate(ball_speed.x, ball_speed.y);
-		if (ball_position.x < 0)
-		{
-			ball_position.x = 0;
-			ball_speed.x = -ball_speed.x;
-		}
-		if (ball_position.y < 0)
-		{
-			ball_position.y = 0;
-			ball_speed.y = -ball_speed.y;
-		}
-		if (ball_position.x > SIZE_PONG_X - ball_width)
-		{
-			ball_position.x = SIZE_PONG_X - ball_width;
-			ball_speed.x = -ball_speed.x;
-		}
-		if (ball_position.y > SIZE_PONG_Y - ball_height)
-		{
-			ball_position.y = SIZE_PONG_Y - ball_height;
-			ball_speed.y = -ball_speed.y;
-		}
-
+		ball.animate();
 		/* Update racket position */
 		racket_position.y += racket_speed;
 		if (racket_position.y < 0)
 			racket_position.y = 0;
-		if (racket_position.y > SIZE_PONG_Y - racket_height/2)
-			racket_position.y = SIZE_PONG_Y - racket_height/2;
+		if (racket_position.y > AREA_SIZE.width - racket_height/2)
+			racket_position.y = AREA_SIZE.height - racket_height/2;
 
 		/* And update output */
 		updateScreen();
@@ -208,18 +160,19 @@ public class Pong extends JPanel implements KeyListener {
 	public void updateScreen() {
 		if (buffer == null) {
 			/* First time we get called with all windows initialized */
-			buffer = createImage(SIZE_PONG_X, SIZE_PONG_Y);
+			buffer = createImage(AREA_SIZE.width, AREA_SIZE.height);
 			if (buffer == null)
 				throw new RuntimeException("Could not instanciate graphics");
 			else
 				graphicContext = buffer.getGraphics();
 		}
+		
 		/* Fill the area with blue */
 		graphicContext.setColor(backgroundColor);
-		graphicContext.fillRect(0, 0, SIZE_PONG_X, SIZE_PONG_Y);
-
+		graphicContext.fillRect(0, 0, AREA_SIZE.width, AREA_SIZE.height);
+		
 		/* Draw items */
-		graphicContext.drawImage(ball, ball_position.x, ball_position.y, ball_width, ball_height, null);
+		ball.draw(graphicContext);
 		graphicContext.drawImage(racket, racket_position.x, racket_position.y, racket_width, racket_height, null);
 
 		this.repaint();
