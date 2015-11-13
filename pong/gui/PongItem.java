@@ -74,6 +74,10 @@ public class PongItem {
 		return (Dimension) this.area.clone();
 	}
 
+	public void setSpeed(Point speed){
+		this.speed = (Point) speed.clone();
+	}
+
 	public void setSpeed(int x, int y){
 		this.speed.x = x;
 		this.speed.y = y;

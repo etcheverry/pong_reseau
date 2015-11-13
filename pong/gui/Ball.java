@@ -5,11 +5,15 @@ import java.awt.Dimension;
 public class Ball extends PongItem{
 
 	public Ball(Dimension area){
-		super("image/sharlball.png", 0, 0, 2, 2, area);
+		super("image/sharlball.png", (int)area.getWidth()/2, (int)area.getHeight()/2, 3, 3, area);
 	}
 
-	public void animate(){
+	public void animate(Racket racket){
 		super.animate();
+
+		if(collision(racket)){
+			this.setSpeedX(-this.getSpeed().x);
+		}
 
 		if (this.getPosition().x < 0)
 		{
@@ -31,5 +35,17 @@ public class Ball extends PongItem{
 			this.setY(this.getArea().height - this.getHeight());
 			this.setSpeedY(-this.getSpeed().y);
 		}
+	}
+
+	public boolean collision(PongItem item){
+		if(item instanceof Racket){
+			Racket r = (Racket) item;
+			if(this.getPosition().x <= r.getPosition().x + r.getWidth()
+				&& this.getPosition().x + this.getWidth() >= r.getPosition().x
+				&& this.getPosition().y <= r.getPosition().y + r.getHeight()
+				&& this.getPosition().y + this.getHeight() >= r.getPosition().y)
+				return true;
+		}
+		return false;
 	}
 }
