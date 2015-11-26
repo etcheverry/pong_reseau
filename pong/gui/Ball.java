@@ -1,51 +1,71 @@
 package pong.gui;
 
 import java.awt.Dimension;
+import java.awt.Point;
 
 public class Ball extends PongItem{
 
+
 	public Ball(Dimension area){
-		super("image/sharlball.png", (int)area.getWidth()/2, (int)area.getHeight()/2, 3, 3, area);
+		super("image/sharlball.png", /*(int)area.getWidth()/2 */ 100, 100 /*(int)area.getHeight()/2*/, 0, 2, area);
 	}
 
 	public void animate(Racket racket){
+		/*
+		forall objects {
+			if collision object.nextpos {
+				object.updateDeplacement
+			}
+			object.move
+		}*/
+		setNextPos(this.getSpeed().x + this.getPosition().x, this.getSpeed().y + this.getPosition().y );
+		
+		CollisionState state = collision(racket);
+		if(state == CollisionState.HORIZONTAL){
+			//this.setX(racket.getPosition().x + racket.getWidth());
+			this.setSpeedX(-this.getSpeed().x);
+		}
+		if(state == CollisionState.VERTICAL){
+			this.setSpeedY(-this.getSpeed().y);
+			this.setNextPos(this.getPosition().x, racket.getNextPos().y - this.getHeight() + 1);
+		}
+		if (this.getNextPos().x < 0)
+		{
+			this.setNextPos(0, getNextPos().y);
+			this.setSpeedX(-this.getSpeed().x);
+		}
+		if (this.getNextPos().y < 0)
+		{
+			this.setNextPos(getNextPos().x, 0);
+			this.setSpeedY(-this.getSpeed().y);
+		}
+		if (this.getNextPos().x > this.getArea().width - this.getWidth())
+		{
+			this.setNextPos(this.getArea().width - this.getWidth(), getNextPos().y);
+			this.setSpeedX(-this.getSpeed().x);
+		}
+		if (this.getNextPos().y > this.getArea().height - this.getHeight())
+		{
+			this.setNextPos(getNextPos().x, this.getArea().height - this.getHeight());
+			this.setSpeedY(-this.getSpeed().y);
+		}
 		super.animate();
-
-		if(collision(racket)){
-			this.setSpeedX(-this.getSpeed().x);
-		}
-
-		if (this.getPosition().x < 0)
-		{
-			this.setX(0);
-			this.setSpeedX(-this.getSpeed().x);
-		}
-		if (this.getPosition().y < 0)
-		{
-			this.setY(0);
-			this.setSpeedY(-this.getSpeed().y);
-		}
-		if (this.getPosition().x > this.getArea().width - this.getWidth())
-		{
-			this.setX(this.getArea().width - this.getWidth());
-			this.setSpeedX(-this.getSpeed().x);
-		}
-		if (this.getPosition().y > this.getArea().height - this.getHeight())
-		{
-			this.setY(this.getArea().height - this.getHeight());
-			this.setSpeedY(-this.getSpeed().y);
-		}
 	}
 
-	public boolean collision(PongItem item){
+	public CollisionState collision(PongItem item){
 		if(item instanceof Racket){
 			Racket r = (Racket) item;
-			if(this.getPosition().x <= r.getPosition().x + r.getWidth()
-				&& this.getPosition().x + this.getWidth() >= r.getPosition().x
-				&& this.getPosition().y <= r.getPosition().y + r.getHeight()
-				&& this.getPosition().y + this.getHeight() >= r.getPosition().y)
-				return true;
+			
+			if (this.getNextPos().x < r.getNextPos().x + r.getWidth()
+				&& this.getNextPos().y + this.getHeight() > r.getNextPos().y
+				&& this.getNextPos().y < r.getNextPos().y + r.getHeight()){
+			System.out.println("Vertical");
+			return CollisionState.VERTICAL;
+
+			}
+			
+				
 		}
-		return false;
+		return CollisionState.NONE;
 	}
 }

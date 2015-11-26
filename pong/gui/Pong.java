@@ -54,12 +54,10 @@ public class Pong extends JPanel implements KeyListener {
 	private Ball ball;
 
 	private Racket racket;
-	private Racket racket2;
 
 	public Pong() {
 		this.ball = new Ball(AREA_SIZE);
 		this.racket = new Racket(AREA_SIZE, 1);
-		this.racket2 = new Racket(AREA_SIZE, 2);
 		this.setPreferredSize(AREA_SIZE);
 		this.addKeyListener(this);
 	}
@@ -70,7 +68,6 @@ public class Pong extends JPanel implements KeyListener {
 	public void animate() {
 		ball.animate(racket);
 		racket.animate();
-		racket2.animate();
 		/* And update output */
 		updateScreen();
 	}
@@ -80,12 +77,10 @@ public class Pong extends JPanel implements KeyListener {
 			case KeyEvent.VK_UP:
 			case KeyEvent.VK_KP_UP:
 				racket.up();
-				racket2.up();
 				break;
 			case KeyEvent.VK_DOWN:
 			case KeyEvent.VK_KP_DOWN:
 				racket.down();
-				racket2.down();
 				break;
 			default:
 				System.out.println("got press "+e);
@@ -96,12 +91,10 @@ public class Pong extends JPanel implements KeyListener {
 			case KeyEvent.VK_UP:
 			case KeyEvent.VK_KP_UP:
 				racket.nup();
-				racket2.nup();
 				break;
 			case KeyEvent.VK_DOWN:
 			case KeyEvent.VK_KP_DOWN:
 				racket.ndown();
-				racket2.ndown();
 				break;
 			default:
 				System.out.println("got release "+e);
@@ -144,7 +137,6 @@ public class Pong extends JPanel implements KeyListener {
 		/* Draw items */
 		ball.draw(graphicContext);
 		racket.draw(graphicContext);
-		racket2.draw(graphicContext);
 		this.repaint();
 	}
 }

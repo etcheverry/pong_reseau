@@ -16,6 +16,10 @@ import javax.swing.JPanel;
 
 
 public class PongItem {
+
+	public enum CollisionState{
+		NONE, VERTICAL, HORIZONTAL;
+	}
 	/**
 	 * Width of pong area
 	 */
@@ -36,6 +40,8 @@ public class PongItem {
 
 	private Point position;
 
+	private Point nextpos;
+
 	private Dimension area;
 
 	public PongItem(String imagePath, int position_x, int position_y, int speed_x, int speed_y, Dimension area){
@@ -48,6 +54,7 @@ public class PongItem {
 		this.position = new Point (position_x, position_y);
 		this.speed = new Point (speed_x, speed_y);
 		this.area = (Dimension)area.clone();
+		this.nextpos = new Point(position_x + speed_x, position_y + speed_y);
 	}
 
 	public PongItem(String imagePath, Dimension area){
@@ -105,8 +112,15 @@ public class PongItem {
 	}
 
 	public void animate(){
-		/* Update item position */
-		this.position.translate(this.speed.x, this.speed.y);
+		this.setPosition(nextpos.x, nextpos.y);
+	}
+
+	public Point getNextPos(){
+		return nextpos;
+	}
+
+	public void setNextPos(int x, int y){
+		this.nextpos = new Point(x,y);
 	}
 
 	public void draw(Graphics graphicContext){
