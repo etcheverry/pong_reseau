@@ -13,14 +13,13 @@ public class Racket extends PongItem{
 		super("image/racket.png", 0, area.width/2, 0, 0, area);
 		int x;
 		if(player_number == 1)
-			setX(100);
+			setX(0);
 		else if(player_number == 2)
 			setX(area.width - this.getWidth());
 		saved_speed = 4;
 	}
 
 	public void animate(){
-
 		setNextPos(this.getSpeed().x + this.getPosition().x, this.getSpeed().y + this.getPosition().y );
 
 		if(up)
@@ -34,7 +33,7 @@ public class Racket extends PongItem{
 
 		/* Update racket position */
 		if (this.getNextPos().y < 0){
-			this.setNextPos(0, getNextPos().y);
+			this.setNextPos(getNextPos().x, 0);
 		}
 		if (this.getNextPos().y > this.getArea().height - this.getHeight()){
 			this.setNextPos(getNextPos().x, this.getArea().height - this.getHeight());

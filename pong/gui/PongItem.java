@@ -17,9 +17,6 @@ import javax.swing.JPanel;
 
 public class PongItem {
 
-	public enum CollisionState{
-		NONE, VERTICAL, HORIZONTAL;
-	}
 	/**
 	 * Width of pong area
 	 */
