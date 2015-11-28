@@ -51,14 +51,11 @@ public class Pong extends JPanel implements KeyListener {
 	 */
 	private Graphics graphicContext = null;
 
-	private Ball ball;
-
 	public Pong() {
 		this.items = new ArrayList<PongItem>();
-		items.add(new Racket(AREA_SIZE, 1));
+		items.add(new Racket(AREA_SIZE, 1)); 
 		items.add(new Racket(AREA_SIZE, 2));
 		items.add(new Ball(AREA_SIZE));
-		this.ball = new Ball(AREA_SIZE);
 		this.setPreferredSize(AREA_SIZE);
 		this.addKeyListener(this);
 	}

@@ -4,14 +4,16 @@ import java.awt.Dimension;
 
 
 public class Racket extends PongItem{
+	// usefull to know the speed before the racket stop
 	private int saved_speed;
 
+	// direction of the racket
 	private boolean up = false;
 	private boolean down = false;
 
 	public Racket(Dimension area, int player_number){
 		super("image/racket.png", 0, area.width/2, 0, 0, area);
-		int x;
+
 		if(player_number == 1)
 			setX(0);
 		else if(player_number == 2)
@@ -22,6 +24,7 @@ public class Racket extends PongItem{
 	public void animate(){
 		setNextPos(this.getSpeed().x + this.getPosition().x, this.getSpeed().y + this.getPosition().y );
 
+		//set the speed according to direction booleans
 		if(up)
 			this.setSpeedY(-saved_speed);
 		else if(down)
@@ -31,7 +34,7 @@ public class Racket extends PongItem{
 		
 		
 
-		/* Update racket position */
+		/* Update racket next position */
 		if (this.getNextPos().y < 0){
 			this.setNextPos(getNextPos().x, 0);
 		}

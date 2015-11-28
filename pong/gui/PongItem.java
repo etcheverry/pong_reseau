@@ -17,16 +17,6 @@ import javax.swing.JPanel;
 
 public class PongItem {
 
-	/**
-	 * Width of pong area
-	 */
-	private static final int SIZE_PONG_X = 800;
-	/**
-	 * Height of pong area
-	 */
-	private static final int SIZE_PONG_Y = 600;
-
-
 	private Image image;
 
 	private int width;
@@ -109,6 +99,7 @@ public class PongItem {
 	}
 
 	public void animate(){
+		// update the current position with the next (must happen after collision tests)
 		this.setPosition(nextpos.x, nextpos.y);
 	}
 

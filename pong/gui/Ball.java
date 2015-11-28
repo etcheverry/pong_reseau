@@ -18,8 +18,10 @@ public class Ball extends PongItem{
 			}
 			object.move
 		}*/
+		
 		//Need to modify this because the order of the items can affect their behavior
 		setNextPos(this.getSpeed().x + this.getPosition().x, this.getSpeed().y + this.getPosition().y );
+
 		if(collision(racket)){
 			this.setSpeedX(-this.getSpeed().x);
 			setNextPos(this.getSpeed().x + this.getPosition().x, this.getSpeed().y + this.getPosition().y );
