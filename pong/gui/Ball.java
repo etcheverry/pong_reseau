@@ -10,7 +10,7 @@ public class Ball extends PongItem{
 		super("image/sharlball.png", (int)area.getWidth()/2, (int)area.getHeight()/2, 3, 3, area);
 	}
 
-	public void animate(Racket racket){
+	public void animate(boolean collide){
 		/*
 		forall objects {
 			if collision object.nextpos {
@@ -18,11 +18,10 @@ public class Ball extends PongItem{
 			}
 			object.move
 		}*/
-		
-		//Need to modify this because the order of the items can affect their behavior
-		setNextPos(this.getSpeed().x + this.getPosition().x, this.getSpeed().y + this.getPosition().y );
 
-		if(collision(racket)){
+		//Need to modify this because the order of the items can affect their behavior
+
+		if(collide){
 			this.setSpeedX(-this.getSpeed().x);
 			setNextPos(this.getSpeed().x + this.getPosition().x, this.getSpeed().y + this.getPosition().y );
 		}
@@ -60,7 +59,6 @@ public class Ball extends PongItem{
 				&& this.getPosition().x + this.getWidth() <= r.getNextPos().x
 				/*The ball is touching the left edge of the racket*/)
 			{
-				
 				if(this.getNextPos().y <= r.getNextPos().y
 					&& this.getNextPos().y + this.getHeight() >= r.getNextPos().y)
 					//The ball is on the upper edge of the racket
@@ -71,12 +69,9 @@ public class Ball extends PongItem{
 					return true;
 				if(this.getNextPos().y <= r.getNextPos().y + r.getHeight()
 					&& this.getNextPos().y + this.getHeight() >= r.getNextPos().y + r.getHeight())
-					//The ball is on the down edge of the racket
-					return true;
-				
+					//The ball is on the bottom edge of the racket
+					return true;	
 			}
-			
-				
 		}
 		return false;
 	}

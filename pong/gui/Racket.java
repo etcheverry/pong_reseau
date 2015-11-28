@@ -22,8 +22,6 @@ public class Racket extends PongItem{
 	}
 
 	public void animate(){
-		setNextPos(this.getSpeed().x + this.getPosition().x, this.getSpeed().y + this.getPosition().y );
-
 		//set the speed according to direction booleans
 		if(up)
 			this.setSpeedY(-saved_speed);

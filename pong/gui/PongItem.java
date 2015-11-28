@@ -98,8 +98,8 @@ public class PongItem {
 		this.position.y = y;
 	}
 
+	// update the current position with the next (must be only after collision tests)
 	public void animate(){
-		// update the current position with the next (must happen after collision tests)
 		this.setPosition(nextpos.x, nextpos.y);
 	}
 
@@ -109,6 +109,11 @@ public class PongItem {
 
 	public void setNextPos(int x, int y){
 		this.nextpos = new Point(x,y);
+	}
+
+	//set the next position according to the current speed
+	public void updateNextPos(){
+		setNextPos(this.getSpeed().x + this.getPosition().x, this.getSpeed().y + this.getPosition().y);
 	}
 
 	public void draw(Graphics graphicContext){
