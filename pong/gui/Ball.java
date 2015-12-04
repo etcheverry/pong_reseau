@@ -2,27 +2,17 @@ package pong.gui;
 
 import java.awt.Dimension;
 import java.awt.Point;
+import java.lang.Math;
 
 public class Ball extends PongItem{
 
 
 	public Ball(Dimension area){
-		super("image/sharlball.png", (int)area.getWidth()/2, (int)area.getHeight()/2, 3, 3, area);
+		super("image/sharlball.png", (int)area.getWidth()/2, (int)area.getHeight()/2, 3, 0, area);
 	}
 
 	public void animate(boolean collide){
-		/*
-		forall objects {
-			if collision object.nextpos {
-				object.updateDeplacement
-			}
-			object.move
-		}*/
-
-		//Need to modify this because the order of the items can affect their behavior
-
 		if(collide){
-			this.setSpeedX(-this.getSpeed().x);
 			setNextPos(this.getSpeed().x + this.getPosition().x, this.getSpeed().y + this.getPosition().y );
 		}
 		if (this.getNextPos().x < 0)
@@ -48,7 +38,8 @@ public class Ball extends PongItem{
 		super.animate();
 	}
 
-	public boolean collision(PongItem item){
+	public boolean collision(PongItem item) {
+		boolean coll = false;
 		if(item instanceof Racket){
 			Racket r = (Racket) item;
 			
@@ -62,17 +53,67 @@ public class Ball extends PongItem{
 				if(this.getNextPos().y <= r.getNextPos().y
 					&& this.getNextPos().y + this.getHeight() >= r.getNextPos().y)
 					//The ball is on the upper edge of the racket
-					return true;
+					coll = true;
 				if(this.getNextPos().y > r.getNextPos().y
 					&& this.getNextPos().y + this.getHeight() <= r.getNextPos().y + r.getHeight())
 					//The ball is inside the racket
-					return true;
+					coll = true;
 				if(this.getNextPos().y <= r.getNextPos().y + r.getHeight()
 					&& this.getNextPos().y + this.getHeight() >= r.getNextPos().y + r.getHeight())
 					//The ball is on the bottom edge of the racket
-					return true;	
+					coll = true;
 			}
 		}
-		return false;
+		if(coll)
+			speedAfterCollision(item);
+		return coll;
+	}
+
+	private void speedAfterCollision(PongItem item) {
+		int midBallPos = (this.getNextPos().y + this.getNextPos().y + this.getHeight()) / 2;
+
+		if(item instanceof Racket){
+			Racket r = (Racket) item;
+			int midRacketPos = (r.getNextPos().y + r.getNextPos().y + r.getHeight()) / 2;
+
+			//if the ball hit the middle of the racket
+			if(Math.abs(midBallPos - midRacketPos) <= r.getHeight() * 0.3){
+				//vertical speed dicrease
+				this.setSpeedY((int)Math.round(this.getSpeed().y -(this.getSpeed().y / 2)));
+				//horizontal speed increase
+				if(Math.abs(this.getSpeed().x) < 5){ //speed limit
+					if(this.getSpeed().x > 0)
+						this.setSpeedX(- (this.getSpeed().x + 1));
+					else
+						this.setSpeedX(- (this.getSpeed().x - 1));
+				}
+				else
+					this.setSpeedX(-this.getSpeed().x);
+			}
+			//if the ball hit the top of the racket
+			else if(midBallPos < midRacketPos - (r.getHeight() * 0.3)){
+				if(Math.abs(this.getSpeed().y) < 5){ //speed limit
+					//hit from above => vertical speed decrease
+					if(this.getSpeed().y > 0)
+						this.setSpeedY((int)Math.round(this.getSpeed().y -(this.getSpeed().y * 0.8)));
+					//front hit and from below => vertical speed increase
+					else
+						this.setSpeedY(this.getSpeed().y -1);
+				}	
+				this.setSpeedX(-this.getSpeed().x);
+			}
+			//if the ball hit the bottom of the racket
+			else if(midBallPos > midRacketPos + (r.getHeight() * 0.3)){
+				if(Math.abs(this.getSpeed().y) < 5){ //speed limit
+					//hit from below => vertical speed decrease
+					if(this.getSpeed().y < 0) 
+						this.setSpeedY((int)Math.round(this.getSpeed().y -(this.getSpeed().y * 0.8)));
+					//front hit and from above => vertical speed increase
+					else
+						this.setSpeedY(this.getSpeed().y +1);
+				}	
+				this.setSpeedX(-this.getSpeed().x);
+			}		
+		}
 	}
 }
