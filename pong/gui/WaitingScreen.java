@@ -45,11 +45,25 @@ public class WaitingScreen extends JPanel implements KeyListener {
 	/*true while no connection found*/
 	private boolean stillWaiting = true;
 
+	private Image ballImage;
+	private Image backGround;
+
+	private ImageIcon ballIcon;
+	private ImageIcon backGroundIcon;
+
 	private int ballNb = 1;
 
 	public WaitingScreen() {
 		this.setPreferredSize(AREA_SIZE);
 		this.addKeyListener(this);
+
+		this.ballImage = Toolkit.getDefaultToolkit().createImage(
+				ClassLoader.getSystemResource("image/sharlball.png"));
+		this.ballIcon = new ImageIcon(this.ballImage);
+
+		this.backGround = Toolkit.getDefaultToolkit().createImage(
+				ClassLoader.getSystemResource("image/waitingScreen.png"));
+		this.backGroundIcon = new ImageIcon(this.backGround);
 	}
 
 	public boolean IsStillWaiting() {
@@ -106,14 +120,10 @@ public class WaitingScreen extends JPanel implements KeyListener {
 		graphicContext.setColor(backgroundColor);
 		graphicContext.fillRect(0, 0, AREA_SIZE.width, AREA_SIZE.height);
 
-		Image image;
-		ImageIcon icon;
-		image = Toolkit.getDefaultToolkit().createImage(
-				ClassLoader.getSystemResource("image/sharlball.png"));
-		icon = new ImageIcon(image);
+		graphicContext.drawImage(this.backGround, 0, 0, this.backGroundIcon.getIconWidth(), this.backGroundIcon.getIconHeight(), null);
 
 		for(int i=0; i < this.ballNb; i++)
-			graphicContext.drawImage(image, (i*50) + 275, 270, icon.getIconWidth(), icon.getIconHeight(), null);
+			graphicContext.drawImage(this.ballImage, (i*50) + 275, 270, this.ballIcon.getIconWidth(), this.ballIcon.getIconHeight(), null);
 		if(ballNb == 5)
 			ballNb = 0;
 		else
