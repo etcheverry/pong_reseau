@@ -14,12 +14,15 @@ public class Window extends JFrame {
 	 */
 	private final Pong pong;
 
+	private final WaitingScreen connectionScreen;
+
 	/**
 	 * Constructor
 	 */
 	public Window(Pong pong) {
+		this.connectionScreen = new WaitingScreen();
+		this.addKeyListener(connectionScreen);
 		this.pong = pong;
-		this.addKeyListener(pong);
 	}
 
 	/**
@@ -27,11 +30,24 @@ public class Window extends JFrame {
 	 * {@link Pong#animate()} method of the {@link Pong} every 100ms
 	 */
 	public void displayOnscreen() {
-		add(pong);
+		add(connectionScreen);
 		pack();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(true);
 
+		boolean connectionWaiting = true;
+		while(connectionWaiting){
+			connectionScreen.updateScreen();
+			try{
+				Thread.sleep(connectionScreen.timestep);
+			}catch (InterruptedException e) {};
+			connectionWaiting = connectionScreen.IsStillWaiting();
+		}
+
+		this.removeKeyListener(connectionScreen);
+		this.addKeyListener(pong);
+		this.add(pong);
+		pack();
 		while(true) {
 			pong.animate();
 			try {
