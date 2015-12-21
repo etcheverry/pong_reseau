@@ -9,8 +9,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
-
 import javax.swing.JPanel;
+
+import java.net.*;
+import java.io.*;
 
 public class WaitingScreen extends JPanel implements KeyListener {
 
@@ -42,9 +44,6 @@ public class WaitingScreen extends JPanel implements KeyListener {
 	 */
 	private Graphics graphicContext = null;
 
-	/*true while no connection found*/
-	private boolean stillWaiting = true;
-
 	private Image ballImage;
 	private Image backGround;
 
@@ -66,23 +65,7 @@ public class WaitingScreen extends JPanel implements KeyListener {
 		this.backGroundIcon = new ImageIcon(this.backGround);
 	}
 
-	public boolean IsStillWaiting() {
-		return stillWaiting;
-	}
-
-	/*##############################
-	  #####     TEMPORAIRE     #####
-	  ##############################*/
-	public void keyPressed(KeyEvent e) {
-		switch (e.getKeyCode()){
-			case KeyEvent.VK_ENTER :
-				stillWaiting = false;
-				break;
-			default:
-				System.out.println("got press "+e);
-				break;
-		}
-	}
+	public void keyPressed(KeyEvent e) { }
 
 	public void keyReleased(KeyEvent e) { }
 
