@@ -3,6 +3,7 @@ package pong.gui;
 import javax.swing.JFrame;
 import java.net.*;
 import java.io.*;
+import pong.gui.Player;
 
 /**
  * A Window is a Java frame containing an Pong
@@ -20,6 +21,8 @@ public class Window extends JFrame {
 
 	private boolean waiting = true;
 
+	private Player pl;
+
 	/**
 	 * Constructor
 	 */
@@ -27,6 +30,7 @@ public class Window extends JFrame {
 		this.waitingScreen = new WaitingScreen();
 		this.addKeyListener(waitingScreen);
 		this.pong = pong;
+		pl = new Player();
 	}
 
 	/**
@@ -70,9 +74,8 @@ public class Window extends JFrame {
 		if(host == null){
 			try{
 				ServerSocket ecoute = new ServerSocket(7777);
-				Socket client = ecoute.accept();
-				client.close();
-				ecoute.close();
+				pl.setSocket(ecoute.accept());
+				System.out.println(pl.read());
 			}
 			catch(IOException e){
 				e.printStackTrace();
@@ -80,17 +83,15 @@ public class Window extends JFrame {
 		}
 		else{
 			try{
-				Socket client = new Socket(host, 7777);
-				client.close();
+				pl.setSocket(new Socket(host, 7777));
+				pl.write("salut");
 			}
 			catch(IOException e){
 				e.printStackTrace();
 			}
 		}
-
-		/*try{
-			Thread.sleep(2000);
-		}catch (InterruptedException e) {};*/
+		
+		pl.closeConnection();
 		waiting = false;
 	}
 }
