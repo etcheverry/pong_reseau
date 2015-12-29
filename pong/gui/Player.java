@@ -9,6 +9,8 @@ public class Player{
 	BufferedReader reader;
 	Socket soc;
 
+	int playerNumber;
+
 	public Player(){
 		
 	}
@@ -49,5 +51,13 @@ public class Player{
 		catch(IOException e){
 			e.printStackTrace();
 		}
+	}
+
+	public void setNumber(int n){
+		playerNumber = n;
+	}
+
+	public int getNumber(){
+		return playerNumber;
 	}
 }

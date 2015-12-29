@@ -56,6 +56,7 @@ public class Window extends JFrame {
 		this.addKeyListener(pong);
 		this.add(pong);
 		pack();
+		pong.setPlayer(pl);
 		while(true) {
 			pong.animate();
 			try {
@@ -64,18 +65,13 @@ public class Window extends JFrame {
 		}
 	}
 
-	/*###########################################
-	  # A COMPLETER : 							#
-	  # attribut les sockets des 2 joueurs      #
-	  # met fin à la boucle de l'écran d'attente#
-	  ########################################### 
-	*/
 	public void connection(String host){
 		if(host == null){
 			try{
 				ServerSocket ecoute = new ServerSocket(7777);
 				pl.setSocket(ecoute.accept());
 				System.out.println(pl.read());
+				pl.setNumber(1);
 			}
 			catch(IOException e){
 				e.printStackTrace();
@@ -85,13 +81,13 @@ public class Window extends JFrame {
 			try{
 				pl.setSocket(new Socket(host, 7777));
 				pl.write("salut");
+				pl.setNumber(2);
 			}
 			catch(IOException e){
 				e.printStackTrace();
 			}
 		}
 		
-		pl.closeConnection();
 		waiting = false;
 	}
 }

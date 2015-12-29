@@ -51,11 +51,13 @@ public class Pong extends JPanel implements KeyListener {
 	 */
 	private Graphics graphicContext = null;
 
+	private Player pl;
+
 	public Pong() {
 		this.items = new ArrayList<PongItem>();
+		items.add(new Ball(AREA_SIZE));
 		items.add(new Racket(AREA_SIZE, 1)); 
 		items.add(new Racket(AREA_SIZE, 2));
-		items.add(new Ball(AREA_SIZE));
 		this.setPreferredSize(AREA_SIZE);
 		this.addKeyListener(this);
 	}
@@ -70,17 +72,27 @@ public class Pong extends JPanel implements KeyListener {
 			if(item instanceof Ball){
 				Ball b = (Ball) item;
 				if(b.getSpeed().x < 0){
-					b.animate(b.collision(items.get(0)));
-				}
-				if(b.getSpeed().x > 0){
 					b.animate(b.collision(items.get(1)));
 				}
-				
+				if(b.getSpeed().x > 0){
+					b.animate(b.collision(items.get(2)));
+				}
 			}
 
 			if(item instanceof Racket){
 				((Racket) item).animate();
 			}
+
+			/*
+			##############################################################
+			oui mais non pcq le animate est fait avant du coup c'pas ouf
+			##############################################################
+			*/
+			pl.write(Integer.toString(((Racket) items.get(pl.getNumber())).getPosition().y));
+			if(pl.getNumber() == 1)
+				((Racket) items.get(2)).setY(Integer.parseInt(pl.read()));
+			else
+				((Racket) items.get(1)).setY(Integer.parseInt(pl.read()));
 			
 		}
 		/* And update output */
@@ -91,17 +103,11 @@ public class Pong extends JPanel implements KeyListener {
 		switch (e.getKeyCode()) {
 			case KeyEvent.VK_UP:
 			case KeyEvent.VK_KP_UP:
-				((Racket)items.get(1)).up();
+				((Racket)items.get(pl.getNumber())).up();
 				break;
 			case KeyEvent.VK_DOWN:
 			case KeyEvent.VK_KP_DOWN:
-				((Racket)items.get(1)).down();
-				break;
-			case KeyEvent.VK_Z:
-				((Racket)items.get(0)).up();
-				break;
-			case KeyEvent.VK_S:
-				((Racket)items.get(0)).down();
+				((Racket)items.get(pl.getNumber())).down();
 				break;
 			default:
 				System.out.println("got press "+e);
@@ -111,17 +117,11 @@ public class Pong extends JPanel implements KeyListener {
 		switch (e.getKeyCode()) {
 			case KeyEvent.VK_UP:
 			case KeyEvent.VK_KP_UP:
-				((Racket)items.get(1)).nup();
+				((Racket)items.get(pl.getNumber())).nup();
 				break;
 			case KeyEvent.VK_DOWN:
 			case KeyEvent.VK_KP_DOWN:
-				((Racket)items.get(1)).ndown();
-				break;
-			case KeyEvent.VK_Z:
-				((Racket)items.get(0)).nup();
-				break;
-			case KeyEvent.VK_S:
-				((Racket)items.get(0)).ndown();
+				((Racket)items.get(pl.getNumber())).ndown();
 				break;
 			default:
 				System.out.println("got release "+e);
@@ -167,5 +167,9 @@ public class Pong extends JPanel implements KeyListener {
 			item.draw(graphicContext);
 		}
 		this.repaint();
+	}
+
+	void setPlayer(Player pl){
+		this.pl = pl;
 	}
 }
