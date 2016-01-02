@@ -3,6 +3,9 @@ package pong.gui;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.lang.Math;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Iterator;
 
 public class Ball extends PongItem{
 
@@ -11,10 +14,15 @@ public class Ball extends PongItem{
 		super("image/sharlball.png", (int)area.getWidth()/2, (int)area.getHeight()/2, 3, 0, area);
 	}
 
-	public void animate(boolean collide){
-		if(collide){
-			setNextPos(this.getSpeed().x + this.getPosition().x, this.getSpeed().y + this.getPosition().y );
+	public void updateNextPos(ArrayList<PongItem> items){
+		super.updateNextPos();
+
+		for(Iterator i = items.iterator() ; i.hasNext(); ){
+			PongItem item = (PongItem)i.next();
+			if(collision(item))
+				speedAfterCollision(item);
 		}
+
 		if (this.getNextPos().x < 0)
 		{
 			this.setNextPos((int)getArea().getWidth()/2, (int)getArea().getHeight()/2);
@@ -35,11 +43,9 @@ public class Ball extends PongItem{
 			this.setNextPos(getNextPos().x, this.getArea().height - this.getHeight());
 			this.setSpeedY(-this.getSpeed().y);
 		}
-		super.animate();
 	}
 
 	public boolean collision(PongItem item) {
-		boolean coll = false;
 		if(item instanceof Racket){
 			Racket r = (Racket) item;
 			
@@ -53,20 +59,18 @@ public class Ball extends PongItem{
 				if(this.getNextPos().y <= r.getNextPos().y
 					&& this.getNextPos().y + this.getHeight() >= r.getNextPos().y)
 					//The ball is on the upper edge of the racket
-					coll = true;
+					return true;
 				if(this.getNextPos().y > r.getNextPos().y
 					&& this.getNextPos().y + this.getHeight() <= r.getNextPos().y + r.getHeight())
 					//The ball is inside the racket
-					coll = true;
+					return true;
 				if(this.getNextPos().y <= r.getNextPos().y + r.getHeight()
 					&& this.getNextPos().y + this.getHeight() >= r.getNextPos().y + r.getHeight())
 					//The ball is on the bottom edge of the racket
-					coll = true;
+					return true;
 			}
 		}
-		if(coll)
-			speedAfterCollision(item);
-		return coll;
+		return false;
 	}
 
 	private void speedAfterCollision(PongItem item) {

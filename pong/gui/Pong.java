@@ -68,20 +68,13 @@ public class Pong extends JPanel implements KeyListener {
 	public void animate() {
 		for(Iterator i = items.iterator() ; i.hasNext(); ){
 			PongItem item = (PongItem)i.next();
-			item.updateNextPos(); //for collision tests
 			if(item instanceof Ball){
 				Ball b = (Ball) item;
-				if(b.getSpeed().x < 0){
-					b.animate(b.collision(items.get(1)));
-				}
-				if(b.getSpeed().x > 0){
-					b.animate(b.collision(items.get(2)));
-				}
+				b.updateNextPos(this.items);
 			}
 
-			if(item instanceof Racket){
-				((Racket) item).animate();
-			}
+			if(item instanceof Racket)
+				((Racket) item).updateNextPos();
 
 			/*
 			##############################################################
@@ -93,6 +86,8 @@ public class Pong extends JPanel implements KeyListener {
 				((Racket) items.get(2)).setY(Integer.parseInt(pl.read()));
 			else
 				((Racket) items.get(1)).setY(Integer.parseInt(pl.read()));
+
+			item.animate();
 			
 		}
 		/* And update output */
