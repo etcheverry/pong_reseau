@@ -8,7 +8,6 @@ public class Player{
 	PrintWriter writer;
 	BufferedReader reader;
 	Socket soc;
-	Racket racket;
 	int id;
 
 	public Player(){
@@ -20,10 +19,6 @@ public class Player{
 
 	public int getID(){
 		return id;
-	}
-
-	public Racket getRacket(){
-		return racket;
 	}
 
 	public void connection(String host, int port){
@@ -45,10 +40,6 @@ public class Player{
 			closeConnection();
 			System.exit(0);
 		}
-	}
-
-	public void setRacket(Racket r){
-		this.racket = r;
 	}
 
 	public void write(String s){
