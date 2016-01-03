@@ -23,20 +23,10 @@ public class Ball extends PongItem{
 				speedAfterCollision(item);
 		}
 
-		if (this.getNextPos().x < 0)
-		{
-			this.setNextPos((int)getArea().getWidth()/2, (int)getArea().getHeight()/2);
-			this.setSpeedX(-this.getSpeed().x);
-		}
 		if (this.getNextPos().y < 0)
 		{
 			this.setNextPos(getNextPos().x, 0);
 			this.setSpeedY(-this.getSpeed().y);
-		}
-		if (this.getNextPos().x > this.getArea().width - this.getWidth())
-		{
-			this.setNextPos((int)getArea().getWidth()/2, (int)getArea().getHeight()/2);
-			this.setSpeedX(-this.getSpeed().x);
 		}
 		if (this.getNextPos().y > this.getArea().height - this.getHeight())
 		{

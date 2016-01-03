@@ -8,13 +8,33 @@ public class Player{
 	PrintWriter writer;
 	BufferedReader reader;
 	Socket soc;
-
-	int playerNumber;
+	Racket racket;
+	int id;
 
 	public Player(){
-		
 	}
 
+	public void setID(int id){
+		this.id = id;
+	}
+
+	public int getID(){
+		return id;
+	}
+
+	public Racket getRacket(){
+		return racket;
+	}
+
+	public void connection(String host, int port){
+		try{
+			this.setSocket(new Socket(host, port));
+		}
+		catch(IOException e){
+			closeConnection();
+			System.exit(0);
+		}
+	}
 	public void setSocket(Socket s){
 		this.soc = s;
 		try{
@@ -22,8 +42,13 @@ public class Player{
 			this.writer = new PrintWriter(new OutputStreamWriter(this.soc.getOutputStream()));
 		}
 		catch(IOException e){
-			e.printStackTrace();
+			closeConnection();
+			System.exit(0);
 		}
+	}
+
+	public void setRacket(Racket r){
+		this.racket = r;
 	}
 
 	public void write(String s){
@@ -37,7 +62,8 @@ public class Player{
 			s = this.reader.readLine();
 		}
 		catch(IOException e){
-			e.printStackTrace();
+			closeConnection();
+			System.exit(0);
 		}
 		return s;
 	}
@@ -50,14 +76,11 @@ public class Player{
 		}
 		catch(IOException e){
 			e.printStackTrace();
+			System.exit(0);
 		}
 	}
 
-	public void setNumber(int n){
-		playerNumber = n;
-	}
-
-	public int getNumber(){
-		return playerNumber;
+	public String toString(){
+		return "coucou";
 	}
 }

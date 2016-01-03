@@ -1,6 +1,5 @@
 package pong.gui;
 
-import pong.gui.Window;
 
 public class MyThread extends Thread{
 	
@@ -8,12 +7,30 @@ public class MyThread extends Thread{
 
 	String host;
 
-	public MyThread(Window window, String host){
+	boolean running = true;
+
+
+	public MyThread(Window window){
 		this.window = window;
-		this.host = host;
 	}
 	
 	public void run(){
-		window.connection(host);
+
+		WaitingScreen waitingScreen = new WaitingScreen();
+		window.addKeyListener(waitingScreen);
+		window.add(waitingScreen);
+		window.pack();
+
+		//while no connection found
+		while(running){
+			waitingScreen.updateScreen();
+			try{
+				Thread.sleep(waitingScreen.timestep);
+			}catch (InterruptedException e) {};
+		}
+		window.removeKeyListener(waitingScreen);
+	}
+	public void stopThread(){
+		running = false;
 	}
 }

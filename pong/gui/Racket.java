@@ -11,12 +11,12 @@ public class Racket extends PongItem{
 	private boolean up = false;
 	private boolean down = false;
 
-	public Racket(Dimension area, int player_number){
+	public Racket(Dimension area, int id){
 		super("image/racket.png", 0, area.width/2, 0, 0, area);
 
-		if(player_number == 1)
+		if(id == 0)
 			setX(0);
-		else if(player_number == 2)
+		else if(id == 1)
 			setX(area.width - this.getWidth());
 		saved_speed = 4;
 	}
@@ -64,5 +64,9 @@ public class Racket extends PongItem{
 
 	public void setSavedSpeed(int new_speed){
 		this.saved_speed = new_speed;
+	}
+
+	public int getSavedSpeed(){
+		return saved_speed;
 	}
 }

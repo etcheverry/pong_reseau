@@ -31,6 +31,10 @@ public class PongItem {
 
 	private Dimension area;
 
+	public PongItem(){
+		
+	}
+
 	public PongItem(String imagePath, int position_x, int position_y, int speed_x, int speed_y, Dimension area){
 		ImageIcon icon;
 		this.image = Toolkit.getDefaultToolkit().createImage(

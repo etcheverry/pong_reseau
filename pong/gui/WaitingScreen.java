@@ -64,7 +64,6 @@ public class WaitingScreen extends JPanel implements KeyListener {
 				ClassLoader.getSystemResource("image/waitingScreen.png"));
 		this.backGroundIcon = new ImageIcon(this.backGround);
 	}
-
 	public void keyPressed(KeyEvent e) { }
 
 	public void keyReleased(KeyEvent e) { }
