@@ -104,6 +104,7 @@ public class WaitingScreen extends JPanel implements KeyListener {
 
 		graphicContext.drawImage(this.backGround, 0, 0, this.backGroundIcon.getIconWidth(), this.backGroundIcon.getIconHeight(), null);
 
+		//the balls animation
 		for(int i=0; i < this.ballNb; i++)
 			graphicContext.drawImage(this.ballImage, (i*50) + 275, 270, this.ballIcon.getIconWidth(), this.ballIcon.getIconHeight(), null);
 		if(ballNb == 5)

@@ -8,7 +8,7 @@ public class Player{
 	PrintWriter writer;
 	BufferedReader reader;
 	Socket soc;
-	int id;
+	int id; //used to recognize the racket of the other player in the PongItem array
 
 	public Player(){
 	}
@@ -21,6 +21,7 @@ public class Player{
 		return id;
 	}
 
+	//finding an host player
 	public void connection(String host, int port){
 		try{
 			this.setSocket(new Socket(host, port));
@@ -30,6 +31,8 @@ public class Player{
 			System.exit(0);
 		}
 	}
+
+	//save the socket in the class and open communication stream between 2 players
 	public void setSocket(Socket s){
 		this.soc = s;
 		try{
@@ -47,6 +50,7 @@ public class Player{
 		this.writer.flush();
 	}
 
+	//read a line from the other player
 	public String read(){
 		String s = new String("");
 		try{
@@ -69,9 +73,5 @@ public class Player{
 			e.printStackTrace();
 			System.exit(0);
 		}
-	}
-
-	public String toString(){
-		return "coucou";
 	}
 }

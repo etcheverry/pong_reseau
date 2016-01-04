@@ -9,9 +9,12 @@ import java.util.Iterator;
 
 public class Ball extends PongItem{
 
-
 	public Ball(Dimension area){
 		super("image/sharlball.png", (int)area.getWidth()/2, (int)area.getHeight()/2, 3, 0, area);
+	}
+
+	public Ball(Dimension area, String imagePath, int posX, int posY, int speedX, int speedY){
+		super(imagePath, posX, posY, speedX, speedY, area);
 	}
 
 	public void updateNextPos(ArrayList<PongItem> items){

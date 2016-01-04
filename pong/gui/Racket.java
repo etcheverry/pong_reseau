@@ -42,6 +42,7 @@ public class Racket extends PongItem{
 		}
 	}
 
+	/* down up nup and ndown are used for the racket motion to be smoother */
 	public void down(){
 		down = true;
 		if(up)

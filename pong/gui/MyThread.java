@@ -30,6 +30,7 @@ public class MyThread extends Thread{
 		}
 		window.removeKeyListener(waitingScreen);
 	}
+	
 	public void stopThread(){
 		running = false;
 	}

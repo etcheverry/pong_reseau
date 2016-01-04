@@ -14,10 +14,13 @@ public class Main  {
 		Pong pong = new Pong(network);
 		Window window = new Window(pong);
 
+		/*thread is used to have the animation of the waiting screen
+		while we are waiting for a connection in the main thread*/
 		MyThread t;
 		t = new MyThread(window);
 		t.start();
 		
+		//waiting for or looking for players
 		if (args.length == 0)
 			network.waitForNPlayers(1);
 		else

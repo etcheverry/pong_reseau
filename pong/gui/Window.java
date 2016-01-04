@@ -34,7 +34,7 @@ public class Window extends JFrame {
 
 	public void displayOnscreen() {
 		//prepare the window for the new panel
-		this.setContentPane(pong);
+		this.add(pong);
 		this.addKeyListener(pong);
 		pack();
 

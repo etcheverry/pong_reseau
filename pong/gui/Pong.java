@@ -59,6 +59,10 @@ public class Pong extends JPanel implements KeyListener {
 
 	private int [] score;
 
+	private static final int POS_DESYNC_LIMIT = 6;
+
+	private static final int SPEED_DESYNC_LIMIT = 6; 
+
 	public Pong(Network network) {
 		this.items = new ArrayList<PongItem>();
 		this.network = network;
@@ -66,25 +70,30 @@ public class Pong extends JPanel implements KeyListener {
 		this.addKeyListener(this);
 	}
 
+	/*we are not using the constructor for this because we need to wait for all players to be connected
+	to add enough rackets */
 	public void initItems(){
 		PongItem itemvide = new PongItem();
-		for(int i = 0; i < network.getPlayers().length + 1; i++){
+		//in the other for loop we want to set rackets in the array at the id of the player 
+		for(int i = 0; i < network.getPlayers().length + 1; i++)
 			items.add(itemvide);
-		}
+
+		//adding rackets
 		items.set(network.getID(), new Racket(AREA_SIZE, network.getID()));
-		System.out.println("Client id :" + network.getID());
-		for(int i = 0; i < network.getPlayers().length ; i++){
+		for(int i = 0; i < network.getPlayers().length ; i++)
 			items.set(network.getPlayers()[i].getID(), new Racket(AREA_SIZE, network.getPlayers()[i].getID()));
-			System.out.println("Player id :" + network.getPlayers()[i].getID());
-			//network.getPlayers()[i].setRacket(r);
-		}
+
+		//adding balls
 		items.add(new Ball(AREA_SIZE));
 		Ball ball2 = new Ball(AREA_SIZE);
 		ball2.setSpeedX(-3);
 		items.add(ball2);
+
 		score = new int[network.getPlayers().length + 1];
 	}
 
+	/*update the score when a ball touch the right or left edge of the area
+	then put the ball in the middle and reset the speed */
 	private void updateScore(Ball b){
 		if (b.getNextPos().x < 0)
 		{
@@ -101,11 +110,15 @@ public class Pong extends JPanel implements KeyListener {
 	}
 
 	/**
-         * Proceeds to the movement of the ball and updates the screen
+         * Proceeds to the movement of items, send and receive control information and updates the screen
 	 */
 	public void animate() {
 		for(Iterator it = items.iterator() ; it.hasNext(); ){
 			PongItem item = (PongItem)it.next();
+
+			/* update the balls next positions, speed and the score
+			then send it to other players to be checked
+			and control the received data */ 
 			if(item instanceof Ball){
 				Ball b = (Ball) item;
 				b.updateNextPos(this.items);
@@ -116,39 +129,11 @@ public class Pong extends JPanel implements KeyListener {
 					analyze(network.receive(i));
 					analyze(network.receive(i));
 				}
-				/*
-				for(int i = 0 ; i < network.getPlayers().length ; i++){
-					String msgPos = "pos " + Integer.toString(b.getNextPos().x) + " " + Integer.toString(b.getNextPos().y);
-					String msgSpeed = "speed " + Integer.toString(b.getSpeed().x) + " " + Integer.toString(b.getSpeed().y);
-					network.getPlayers()[i].write(msgSpeed);
-					network.getPlayers()[i].write(msgPos);
-				}
-				for(int i = 0 ; i < network.getPlayers().length ; i++){
-					for(int j = 0; j < 2; j++){
-						String msg = network.getPlayers()[i].read();
-						String tmsg[] = msg.split(" ");
-						if(tmsg[0].equals("pos")){
-							int x = Integer.parseInt(tmsg[1]);
-							int y = Integer.parseInt(tmsg[2]);
-							if(b.getNextPos().x != x || b.getNextPos().y != y){
-								System.out.println("Position desync");
-								b.setNextPos((b.getNextPos().x + x) / 2, (b.getNextPos().y + y) / 2);
-							}
-						}
-						else if(tmsg[0].equals("speed")){
-							int x = Integer.parseInt(tmsg[1]);
-							int y = Integer.parseInt(tmsg[2]);
-							if(b.getSpeed().x != x || b.getSpeed().y != y){
-								System.out.println("Speed desync");
-								b.setSpeed((b.getSpeed().x + x) / 2, (b.getSpeed().y + y) / 2);
-							}
-						}
-					}
-					
-				}*/
-				
 			}
 			
+			/* update the rackets next positions
+			and send it to other players to be checked 
+			and control the received data */ 
 			if(item instanceof Racket){
 				Racket r = (Racket) item;
 				r.updateNextPos();
@@ -158,16 +143,8 @@ public class Pong extends JPanel implements KeyListener {
 				}
 			}
 		}
-		/*
-		for(int i = 0 ; i < network.getPlayers().length ; i++){
-			network.getPlayers()[i].write(Integer.toString(items.get(0).getPosition().y));
-		}
-		for(int i = 0 ; i < network.getPlayers().length ; i++){
-			network.getPlayers()[i].getRacket().setNextPos(network.getPlayers()[i].getRacket().getNextPos().x, Integer.parseInt(network.getPlayers()[i].read()));
-		}
-	*/
 
-
+		//set the new positions of items previously calculated
 		for(Iterator it = items.iterator() ; it.hasNext(); ){
 			PongItem item = (PongItem)it.next();
 			item.animate();
@@ -178,18 +155,30 @@ public class Pong extends JPanel implements KeyListener {
 	}
 
 	private void analyze(String[] msg){
+
+		//analyze pos message
 		if(msg[0].equals("pos")){
 			int id = Integer.parseInt(msg[1]);
 			int x = Integer.parseInt(msg[2]);
 			int y = Integer.parseInt(msg[3]);
 			PongItem item = items.get(id);
+
+			//analyze ball
 			if(item instanceof Ball){
 				Ball b = (Ball) item;
+				//test if the positions aren't the same
 				if(b.getNextPos().x != x || b.getNextPos().y != y){
 					System.out.println("Position desync");
-					b.setNextPos((b.getNextPos().x + x) / 2, (b.getNextPos().y + y) / 2);
+					//if it's too much we stop
+					if(Math.abs(b.getNextPos().x - x) > POS_DESYNC_LIMIT || Math.abs(b.getNextPos().y - y) > POS_DESYNC_LIMIT){
+						System.out.println("too much difference between the ball positions");
+						System.exit(0);
+					}
+					else
+						b.setNextPos((b.getNextPos().x + x) / 2, (b.getNextPos().y + y) / 2);
 				}
 			}
+			//analyze racket
 			if(item instanceof Racket){
 				Racket r = (Racket) item;
 				if(y > r.getPosition().y)
@@ -198,22 +187,35 @@ public class Pong extends JPanel implements KeyListener {
 					r.setNextPos(r.getNextPos().x, r.getNextPos().y - r.getSavedSpeed());
 			}
 		}
+		//analyze speed message
 		else if (msg[0].equals("speed")){
 			int id = Integer.parseInt(msg[1]);
 			int x = Integer.parseInt(msg[2]);
 			int y = Integer.parseInt(msg[3]);
 			PongItem item = items.get(id);
+
+			//analyze ball
 			if(item instanceof Ball){
 				Ball b = (Ball) item;
-				if(b.getSpeed().x != x || b.getSpeed().y != y){
+				//test if the speeds aren't the same
+				if(b.getSpeed().x != x || b.getSpeed().y != y){ 
 					System.out.println("Speed desync");
-					b.setSpeed((b.getSpeed().x + x) / 2, (b.getSpeed().y + y) / 2);
+					//if it's too much we stop
+					if(Math.abs(b.getSpeed().x - x) > SPEED_DESYNC_LIMIT || Math.abs(b.getSpeed().y - y) > SPEED_DESYNC_LIMIT){
+						System.out.println("too much difference between the ball speeds");
+						System.exit(0);
+					}
+					else
+						b.setSpeed((b.getSpeed().x + x) / 2, (b.getSpeed().y + y) / 2);
 				}
 			}
+			//racket speed don't change
 			else
 				System.out.println("Unknown element");
 		}
 	}
+
+	//up and down arrow to move the racket
 	public void keyPressed(KeyEvent e) {
 		switch (e.getKeyCode()) {
 			case KeyEvent.VK_UP:
@@ -228,6 +230,8 @@ public class Pong extends JPanel implements KeyListener {
 			System.out.println("got press "+e);
 		}
 	}
+
+	//stop the racket when keys are released
 	public void keyReleased(KeyEvent e) {
 		switch (e.getKeyCode()) {
 			case KeyEvent.VK_UP:
@@ -242,6 +246,7 @@ public class Pong extends JPanel implements KeyListener {
 			System.out.println("got release "+e);
 		}
 	}
+
 	public void keyTyped(KeyEvent e) { }
 
 	/*
@@ -272,6 +277,7 @@ public class Pong extends JPanel implements KeyListener {
 				graphicContext = buffer.getGraphics();
 		}
 		graphicContext.setFont(stringFont);
+
 		/* Fill the area with blue */
 		graphicContext.setColor(backgroundColor);
 		graphicContext.fillRect(0, 0, AREA_SIZE.width, AREA_SIZE.height);
@@ -283,6 +289,8 @@ public class Pong extends JPanel implements KeyListener {
 			PongItem item = (PongItem)i.next();
 			item.draw(graphicContext);
 		}
+
+		//draw the score
 		graphicContext.drawString(Integer.toString(score[0]), AREA_SIZE.width/2 - 130, 40);
 		graphicContext.drawString(Integer.toString(score[1]), AREA_SIZE.width/2 + 100, 40);
 		this.repaint();
